@@ -12,4 +12,4 @@ You don't list your NFT. You can't sell it for a loss. You can't transfer it. Bu
 
 But you can mint anything for free. Think everyone will want @elonmusk? Mint it while you can. What's the worst that could happen?
 
-* Not guaranteed, DYOR
+\*Not guaranteed, DYOR
