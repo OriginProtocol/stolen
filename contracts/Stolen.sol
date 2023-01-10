@@ -213,7 +213,7 @@ contract Stolen is Initializable, ERC721Upgradeable, ERC2981Upgradeable, ERC721E
      *
      * Note:
      *
-     * - change is intended to be positive (10% causes price to increase on each sale)
+     * - change is intended to be positive (100% causes price to double on each sale)
      * - if set to negative, it could throttle how quickly prices can fall
      * - currently linear, would be more interesting as a curve
      */
