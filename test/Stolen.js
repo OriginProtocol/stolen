@@ -1,7 +1,9 @@
 const { expect } = require("chai");
 const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
 
-const TWITTER_ID = '928647522817417216'; // @originprotocol
+const TWITTER_ID_1 = '928647522817417216'; // @originprotocol
+const TWITTER_ID_2 = '1290110005882916864'; // @origindollar
+
 
 describe("Stolen contract", function () {
   async function deployStolenFixture() {
@@ -36,9 +38,9 @@ describe("Stolen contract", function () {
       await instance.setDefaultRoyalty(owner.address, 100);
 
       // mint an NFT
-      await instance.safeMint(owner.address, TWITTER_ID);
+      await instance.safeMint(owner.address, TWITTER_ID_1);
       // confirm that the NFT's royalty info matches the default
-      const [receiver, amount] = await instance.royaltyInfo(TWITTER_ID, ethers.utils.parseEther('1'));
+      const [receiver, amount] = await instance.royaltyInfo(TWITTER_ID_1, ethers.utils.parseEther('1'));
       expect(receiver).to.equal(owner.address);
       expect(amount).to.equal(ethers.utils.parseEther('0.01'));
     })
@@ -62,16 +64,16 @@ describe("Stolen contract", function () {
     it("Should transfer an NFT to the desired address upon minting", async function () {
       const { instance, owner, addr1, addr2 } = await loadFixture(deployStolenFixture);
 
-      await instance.safeMint(addr1.address, TWITTER_ID);
-      expect(await instance.ownerOf(TWITTER_ID)).to.equal(addr1.address);
+      await instance.safeMint(addr1.address, TWITTER_ID_1);
+      expect(await instance.ownerOf(TWITTER_ID_1)).to.equal(addr1.address);
     });
 
     it("Should not allow a second NFT to be minted with the same Twitter ID", async function () {
       const { instance, owner, addr1, addr2 } = await loadFixture(deployStolenFixture);
       
-      await instance.safeMint(addr1.address, TWITTER_ID);
+      await instance.safeMint(addr1.address, TWITTER_ID_1);
       await expect(
-        instance.safeMint(owner.address, TWITTER_ID)
+        instance.safeMint(owner.address, TWITTER_ID_1)
       ).to.be.revertedWith("ERC721: token already minted");
     });
 
@@ -80,17 +82,17 @@ describe("Stolen contract", function () {
       
       await instance.safeMint(addr1.address, 123456789);
       await expect(
-        instance.safeMint(addr1.address, TWITTER_ID)
+        instance.safeMint(addr1.address, TWITTER_ID_1)
       ).to.be.revertedWith("Address cannot own more than one token at a time");
     });
 
     it("Should prevent an NFT to be transferred without a purchase", async function () {
       const { instance, owner, addr1, addr2 } = await loadFixture(deployStolenFixture);
       
-      await instance.safeMint(addr1.address, TWITTER_ID);
-      await instance.transferFrom(addr1.address, owner.address, TWITTER_ID);
+      await instance.safeMint(addr1.address, TWITTER_ID_1);
+      await instance.transferFrom(addr1.address, owner.address, TWITTER_ID_1);
 
-      expect(await instance.ownerOf(TWITTER_ID)).to.equal(addr1.address);
+      expect(await instance.ownerOf(TWITTER_ID_1)).to.equal(addr1.address);
     });
   });
 
@@ -98,46 +100,57 @@ describe("Stolen contract", function () {
     it("Should return a price of 0 for a newly minted NFT", async function () {
       const { instance, owner, addr1, addr2 } = await loadFixture(deployStolenFixture);
       
-      await instance.safeMint(addr1.address, TWITTER_ID);
-      expect(await instance.lastPrices(TWITTER_ID)).to.equal(0);
+      await instance.safeMint(addr1.address, TWITTER_ID_1);
+      expect(await instance.lastPrices(TWITTER_ID_1)).to.equal(0);
     });
 
     it("Should prevent a purchase with no payment", async function () {
       const { instance, owner, addr1, addr2 } = await loadFixture(deployStolenFixture);
 
-      await instance.safeMint(addr1.address, TWITTER_ID);
+      await instance.safeMint(addr1.address, TWITTER_ID_1);
       await expect(
-        instance["purchase(uint256)"](TWITTER_ID)
+        instance["purchase(uint256)"](TWITTER_ID_1)
       ).to.be.revertedWith("Price must be greater than minimum purchase threshold");
     });
 
     it("Should allow a purchase with a large payment", async function () {
       const { instance, owner, addr1, addr2 } = await loadFixture(deployStolenFixture);
 
-      await instance.safeMint(addr1.address, TWITTER_ID);
-      await instance["purchase(uint256)"](TWITTER_ID, { value: ethers.utils.parseEther("1") });
-      expect(await instance.ownerOf(TWITTER_ID)).to.equal(owner.address);
+      await instance.safeMint(addr1.address, TWITTER_ID_1);
+      await instance["purchase(uint256)"](TWITTER_ID_1, { value: ethers.utils.parseEther("1") });
+      expect(await instance.ownerOf(TWITTER_ID_1)).to.equal(owner.address);
     });
 
     it("Should prevent a second purchase with payment equal to the first purchase", async function () {
       const { instance, owner, addr1, addr2 } = await loadFixture(deployStolenFixture);
 
-      await instance.safeMint(addr1.address, TWITTER_ID);
-      await instance["purchase(uint256)"](TWITTER_ID, { value: ethers.utils.parseEther("1") });
+      await instance.safeMint(addr1.address, TWITTER_ID_1);
+      await instance["purchase(uint256)"](TWITTER_ID_1, { value: ethers.utils.parseEther("1") });
 
       await expect(
-        instance.connect(addr2)["purchase(uint256)"](TWITTER_ID, { value: ethers.utils.parseEther("1") })
+        instance.connect(addr2)["purchase(uint256)"](TWITTER_ID_1, { value: ethers.utils.parseEther("1") })
       ).to.be.revertedWith("Price must be greater than minimum change");
     });
 
     it("Should report the correct minimum price after two purchases", async function () {
       const { instance, owner, addr1, addr2 } = await loadFixture(deployStolenFixture);
 
-      await instance.safeMint(addr1.address, TWITTER_ID);
-      await instance["purchase(uint256)"](TWITTER_ID, { value: ethers.utils.parseEther("1") });
-      await instance.connect(addr2)["purchase(uint256)"](TWITTER_ID, { value: ethers.utils.parseEther("2") });
+      await instance.safeMint(addr1.address, TWITTER_ID_1);
+      await instance["purchase(uint256)"](TWITTER_ID_1, { value: ethers.utils.parseEther("1") });
+      await instance.connect(addr2)["purchase(uint256)"](TWITTER_ID_1, { value: ethers.utils.parseEther("2") });
 
-      expect(await instance.minPrice(TWITTER_ID)).to.equal(ethers.utils.parseEther("4"));
+      expect(await instance.minPrice(TWITTER_ID_1)).to.equal(ethers.utils.parseEther("4"));
+    });
+
+    it("Should prevent purchases from existing NFT holders", async function () {
+      const { instance, owner, addr1, addr2 } = await loadFixture(deployStolenFixture);
+      
+      await instance.safeMint(addr1.address, TWITTER_ID_1);
+      await instance.safeMint(addr2.address, TWITTER_ID_2);
+
+      await expect(
+        instance.connect(addr2)["purchase(uint256)"](TWITTER_ID_1, { value: ethers.utils.parseEther("1") })
+      ).to.be.revertedWith("Address cannot own more than one token at a time");
     });
   });
 })
