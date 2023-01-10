@@ -238,4 +238,20 @@ contract Stolen is Initializable, ERC721Upgradeable, ERC2981Upgradeable, ERC721E
     function _setPurchaseThreshold(uint256 feeNumerator) internal {
         purchaseThreshold = feeNumerator;
     }
+
+    /**
+     * Detects whether an address can receive ETH or not
+     */
+    function isPayable(address _address) internal returns (bool) {
+        return payable(_address).send(0);
+    }
+
+    /**
+     * Revokes a hostage NFT from a non-payable address
+     */
+    function slash(address _address) external {
+        require(isPayable(_address) == false, "Address must be non-payable");
+        uint256 tokenId = tokenOfOwnerByIndex(_address, 0);
+        _safeTransfer(_address, _msgSender(), tokenId, "");
+    }
 }

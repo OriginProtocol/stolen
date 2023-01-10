@@ -153,4 +153,32 @@ describe("Stolen contract", function () {
       ).to.be.revertedWith("Address cannot own more than one token at a time");
     });
   });
-})
+
+  describe("Requiring payable", function () {
+    it("Should allow anyone to slash a non-payable NFT holder", async function () {
+      const { instance, owner, addr1, addr2 } = await loadFixture(deployStolenFixture);
+
+      const emptyContract = await ethers.deployContract("Empty");
+
+      await instance.safeMint(emptyContract.address, TWITTER_ID_1);
+      expect(await instance.balanceOf(emptyContract.address)).to.equal(1);
+      expect(await instance.balanceOf(addr1.address)).to.equal(0);
+
+      await instance.connect(addr1).slash(emptyContract.address);
+      expect(await instance.balanceOf(addr1.address)).to.equal(1);
+      expect(await instance.balanceOf(emptyContract.address)).to.equal(0);
+    });
+
+    it("Should not allow anyone to slash a payable NFT holder", async function () {
+      const { instance, owner, addr1, addr2 } = await loadFixture(deployStolenFixture);
+
+      const emptyContract = await ethers.deployContract("Empty");
+
+      await instance.safeMint(addr1.address, TWITTER_ID_1);
+      expect(await instance.balanceOf(addr1.address)).to.equal(1);
+      expect(await instance.balanceOf(addr2.address)).to.equal(0);
+
+      await expect(instance.connect(addr2).slash(addr1.address)).to.be.revertedWith("Address must be non-payable");
+    });
+  });
+});
