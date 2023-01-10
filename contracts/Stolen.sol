@@ -162,7 +162,7 @@ contract Stolen is Initializable, ERC721Upgradeable, ERC2981Upgradeable, ERC721E
     ) external payable {
         // Restrict token ownership to one per account
         require(balanceOf(_msgSender()) < 1, "Address cannot own more than one token at a time");
-        require (msg.value > purchaseThreshold, "Price must be greater than minimum purchase threshold");
+        require (msg.value >= purchaseThreshold, "Price must be greater than minimum purchase threshold");
         require (msg.value >= minPrice(tokenId), "Price must be greater than minimum change");
 
         address seller = _ownerOf(tokenId);
@@ -181,7 +181,7 @@ contract Stolen is Initializable, ERC721Upgradeable, ERC2981Upgradeable, ERC721E
     ) external payable {
         // Restrict token ownership to one per account
         require(balanceOf(_msgSender()) < 1, "Address cannot own more than one token at a time");
-        require (msg.value > purchaseThreshold, "Price must be greater than minimum purchase threshold");
+        require (msg.value >= purchaseThreshold, "Price must be greater than minimum purchase threshold");
         require (msg.value >= minPrice(tokenId), "Price must be greater than minimum change");
 
         address seller = _ownerOf(tokenId);
