@@ -38,8 +38,11 @@ import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721Burnab
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/math/MathUpgradeable.sol";
 
 contract Stolen is Initializable, ERC721Upgradeable, ERC2981Upgradeable, ERC721EnumerableUpgradeable, ERC721BurnableUpgradeable, OwnableUpgradeable, UUPSUpgradeable {
+    // Limit on the number of NFTs held per account
+    uint256 public maxOwnerCollectionSize;
     // Required price change for each subsequent purchase
     uint256 public priceChangeRate;
     // Required minimum price for initial purchase after mint
@@ -63,12 +66,12 @@ contract Stolen is Initializable, ERC721Upgradeable, ERC2981Upgradeable, ERC721E
     }
 
     function _baseURI() internal pure override returns (string memory) {
-        return "https://temp.com";
+        return "http://stolen.fyi/";
     }
 
     function safeMint(address to, uint256 tokenId) public {
         // Restrict token ownership to one per account
-        require(balanceOf(to) < 1, "Address cannot own more than one token at a time");
+        require(balanceOf(to) < maxOwnerCollectionSize, "Address cannot own more than three tokens at a time");
 
         _safeMint(to, tokenId);
     }
@@ -134,7 +137,9 @@ contract Stolen is Initializable, ERC721Upgradeable, ERC2981Upgradeable, ERC721E
     function minPrice(
         uint256 tokenId
     ) public view returns (uint256) {
-        return lastPrices[tokenId] * (1 + priceChangeRate / _changeDenominator());
+        uint256 increasedPrice = lastPrices[tokenId] * (1 + priceChangeRate / _changeDenominator());
+
+        return MathUpgradeable.max(increasedPrice, purchaseThreshold);
     }
 
     /**
@@ -161,7 +166,7 @@ contract Stolen is Initializable, ERC721Upgradeable, ERC2981Upgradeable, ERC721E
         uint256 tokenId
     ) external payable {
         // Restrict token ownership to one per account
-        require(balanceOf(_msgSender()) < 1, "Address cannot own more than one token at a time");
+        require(balanceOf(_msgSender()) < maxOwnerCollectionSize, "Address cannot own more than three tokens at a time");
         require (msg.value >= purchaseThreshold, "Price must be greater than minimum purchase threshold");
         require (msg.value >= minPrice(tokenId), "Price must be greater than minimum change");
 
@@ -180,7 +185,7 @@ contract Stolen is Initializable, ERC721Upgradeable, ERC2981Upgradeable, ERC721E
         bytes memory data
     ) external payable {
         // Restrict token ownership to one per account
-        require(balanceOf(_msgSender()) < 1, "Address cannot own more than one token at a time");
+        require(balanceOf(_msgSender()) < maxOwnerCollectionSize, "Address cannot own more than three tokens at a time");
         require (msg.value >= purchaseThreshold, "Price must be greater than minimum purchase threshold");
         require (msg.value >= minPrice(tokenId), "Price must be greater than minimum change");
 
@@ -189,6 +194,13 @@ contract Stolen is Initializable, ERC721Upgradeable, ERC2981Upgradeable, ERC721E
 
         // Transfer token to purchaser, must be caller
         _safeTransfer(seller, _msgSender(), tokenId, data);
+    }
+
+    /**
+     * Sets the limit on the size of every owner's collection
+     */
+    function setMaxOwnerCollectionSize(uint256 limit) external onlyOwner {
+        maxOwnerCollectionSize = limit;
     }
 
     /**
@@ -228,15 +240,15 @@ contract Stolen is Initializable, ERC721Upgradeable, ERC2981Upgradeable, ERC721E
     /**
      * Sets the minimum price required for an initial purchase after minting
      */
-    function setPurchaseThreshold(uint256 feeNumerator) external onlyOwner {
-        purchaseThreshold = feeNumerator;
+    function setPurchaseThreshold(uint256 startingPrice) external onlyOwner {
+        purchaseThreshold = startingPrice;
     }
 
     /**
      * Sets the minimum price required for an initial purchase after minting
      */
-    function _setPurchaseThreshold(uint256 feeNumerator) internal {
-        purchaseThreshold = feeNumerator;
+    function _setPurchaseThreshold(uint256 startingPrice) internal {
+        purchaseThreshold = startingPrice;
     }
 
     /**
@@ -247,11 +259,13 @@ contract Stolen is Initializable, ERC721Upgradeable, ERC2981Upgradeable, ERC721E
     }
 
     /**
-     * Revokes a hostage NFT from a non-payable address
+     * Revokes hostage NFTs from a non-payable address
      */
     function slash(address _address) external {
         require(isPayable(_address) == false, "Address must be non-payable");
-        uint256 tokenId = tokenOfOwnerByIndex(_address, 0);
-        _safeTransfer(_address, _msgSender(), tokenId, "");
+
+        for (uint i = 0; i < balanceOf(_address); i++) {
+            _safeTransfer(_address, _msgSender(), tokenOfOwnerByIndex(_address, i), "");
+        }
     }
 }

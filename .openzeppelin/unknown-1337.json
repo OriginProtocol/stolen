@@ -2,15 +2,30 @@
   "manifestVersion": "3.2",
   "proxies": [
     {
+      "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+      "txHash": "0xb72455063d74982c24149715155e0f4cbe5d645f7938f26e9d9fde82c4bbe94e",
+      "kind": "uups"
+    },
+    {
+      "address": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
+      "txHash": "0xb5c2960eeb01bee58733eae3b74f41596f47b0e70ee93dbaf11d128cd27e6157",
+      "kind": "uups"
+    },
+    {
+      "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
+      "txHash": "0xdd6bb71c9a9f54420c6a3d2e580d42b45b343b30e7d2e767d391bb150f638a77",
+      "kind": "uups"
+    },
+    {
       "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-      "txHash": "0xfecc7465d04cdeab270d8c338bfa390a1908d451d4e0792dcc762b342d8fb228",
+      "txHash": "0x78bdd4e358a823d89fd1303c395c8d1cc0cb4fa80aa5b6754e74e3359f5bbac7",
       "kind": "uups"
     }
   ],
   "impls": {
-    "b8bb3ccde01c51efae97e68a802c462b385f9a77e38c31bbfec39021cc74c623": {
+    "9a289532933f723ad267d08ea1dc9718e9366f03c2f30d945bec84097f1b9c9a": {
       "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "txHash": "0x4767c4ce309e90742296f2420b0c2a932c7614cb7529d1691df2a75df38b3c58",
+      "txHash": "0x9be9de5c0fd20604c70e8d2d590c504da110cda91d45859f88fea760263c5bb6",
       "layout": {
         "solcVersion": "0.8.9",
         "storage": [
@@ -208,28 +223,36 @@
             "src": "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol:107"
           },
           {
-            "label": "priceChangeRate",
+            "label": "maxOwnerCollectionSize",
             "offset": 0,
             "slot": "451",
             "type": "t_uint256",
             "contract": "Stolen",
-            "src": "contracts/Stolen.sol:44"
+            "src": "contracts/Stolen.sol:45"
           },
           {
-            "label": "purchaseThreshold",
+            "label": "priceChangeRate",
             "offset": 0,
             "slot": "452",
             "type": "t_uint256",
             "contract": "Stolen",
-            "src": "contracts/Stolen.sol:46"
+            "src": "contracts/Stolen.sol:47"
+          },
+          {
+            "label": "purchaseThreshold",
+            "offset": 0,
+            "slot": "453",
+            "type": "t_uint256",
+            "contract": "Stolen",
+            "src": "contracts/Stolen.sol:49"
           },
           {
             "label": "lastPrices",
             "offset": 0,
-            "slot": "453",
+            "slot": "454",
             "type": "t_mapping(t_uint256,t_uint256)",
             "contract": "Stolen",
-            "src": "contracts/Stolen.sol:49"
+            "src": "contracts/Stolen.sol:52"
           }
         ],
         "types": {

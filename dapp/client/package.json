@@ -1,9 +1,9 @@
 {
-  "name": "frontend",
+  "name": "stolen-client",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "bootstrap": "^4.4.1",
+    "@primer/octicons-react": "^17.10.1",
     "ethers": "^5.4.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
@@ -30,5 +30,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "proxy": "http://localhost:4000"
 }

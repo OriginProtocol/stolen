@@ -1,0 +1,270 @@
+h1, h2, h3, h4, h5 {
+  font-family: 'Syne Mono', monospace;
+  margin: 0;
+}
+
+h1 {
+  margin-bottom: 21px;
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 21px;
+}
+
+p {
+  font-size: 1rem;
+  margin: 0;
+}
+
+html, body {
+  font-family: 'Share Tech Mono', monospace;
+  padding: 0;
+  margin: 0;
+  color: #F5F8FA;
+  line-height: 1.5;
+}
+
+button {
+  font-family: 'Share Tech Mono', monospace;
+}
+
+nav {
+  background: #14171A;
+  padding: 42px;
+}
+
+nav p {
+  color: #1DA1F2;
+}
+
+.hero {
+  background: #fc5a9f;
+  padding: 84px 42px;
+}
+
+.hero ul {
+  margin: 42px 0;
+}
+
+.features {
+  margin: 21px 0;
+}
+
+.features p {
+  margin: 14px 0;
+}
+
+.features svg {
+  margin-right: 14px;
+}
+
+.octicon-smiley {
+  -webkit-transform: rotateX(180deg);
+          transform: rotateX(180deg);
+}
+
+.disclaimer {
+  margin-top: 21px;
+}
+
+footer p:not(:last-of-type) {
+  margin-bottom: 21px;
+}
+
+input, button {
+  margin-top: 7px;
+  font-size: 21px;
+  padding: 14px;
+  background: #F5F8FA;
+  color: #14171A;
+  border: none;
+  border-radius: 7px;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+input[type="number"] {
+  width: 210px;
+}
+
+input[type="text"] {
+  width: 210px;
+}
+
+input[type="submit"] {
+  background: #14171A;
+  color: #F5F8FA;
+  width: 238px;
+}
+
+input[type="submit"]:not(disabled):hover {
+  background: #fc5a9f;
+  cursor: pointer;
+}
+
+input::placeholder {
+  color: #657786;
+}
+
+input:disabled {
+  opacity: 0.74;
+}
+
+.work {
+  background: #1DA1F2;
+  padding: 84px 42px;
+}
+
+.work a {
+  text-decoration: underline;
+}
+
+footer {
+  background: #657786;
+  padding: 84px 42px;
+}
+
+footer a {
+  color: #F5F8FA;
+  text-decoration: none;
+}
+
+.bag {
+  margin-top: 21px;
+}
+
+.images {
+  margin-top: 7px;
+}
+
+.nft {
+  border-radius: 7px;
+  width: 238px;
+  display: inline-block;
+  margin-right: 21px;
+}
+
+.nft .metadata {
+  background: #F5F8FA;
+  color: #14171A;
+  border-radius: 0 0 7px 7px;
+  padding: 14px 21px;
+}
+
+.nft .image-container {
+  position: relative;
+  height: 238px;
+  width: 238px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.nft .stamp {
+  position: absolute;
+  color: #fc5a9f;
+  font-size: 42px;
+  font-family: 'Syne Mono', monospace;
+  transform: rotate(-21deg);
+}
+
+.nft img {
+  position: absolute;
+  display: block;
+  height: 238px;
+  width: 238px;
+  border-radius: 7px 7px 0 0;
+  margin: 0;
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);
+}
+
+.connect-wallet, .account {
+  margin-bottom: 21px;
+}
+
+.connect-wallet button {
+  background: #14171A;
+  color: #F5F8FA;
+  cursor: pointer;
+  width: 238px;
+}
+
+.alert {
+  border: 1px solid #F5F8FA;
+  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  padding: 21px;
+  margin: 7px 0 21px;
+}
+
+.close {
+  padding: 0;
+  width: 21px;
+  cursor: pointer;
+  background: transparent;
+  color: #F5F8FA;
+  margin: 0 0 0 21px;
+}
+
+.marketplace {
+  background: #E1E8ED;
+  color: #14171A;
+  padding: 84px 42px;
+}
+
+.marketplace .metadata {
+  border-radius: 0;
+}
+
+.listings {
+  margin-top: 21px;
+}
+
+.listing {
+  background: #F5F8FA;
+  border-radius: 0 0 7px 7px;
+}
+
+.price {
+  padding: 0 21px 14px;
+}
+
+.listing button {
+  cursor: pointer;
+  width: 100%;
+  border-radius: 0 0 7px 7px;
+  color: #F5F8FA;
+}
+
+.buy {
+  background: #fc5a9f;
+}
+
+.buy:hover, .owned {
+  background: #1DA1F2;
+}
+
+.fyi {
+  background: #AAB8C2;
+  color: #14171A;
+  padding: 84px 42px;
+}
+
+.fyi li {
+  margin-bottom: 14px;
+}

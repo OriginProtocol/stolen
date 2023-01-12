@@ -5,7 +5,7 @@ import { ethers } from "ethers";
 
 // We import the contract's artifacts and address here, as we are going to be
 // using them with ethers
-import TokenArtifact from "../contracts/Token.json";
+import StolenArtifact from "../contracts/Stolen.json";
 import contractAddress from "../contracts/contract-address.json";
 
 // All the logic of this dapp is contained in the Dapp component.
@@ -14,10 +14,10 @@ import contractAddress from "../contracts/contract-address.json";
 import { NoWalletDetected } from "./NoWalletDetected";
 import { ConnectWallet } from "./ConnectWallet";
 import { Loading } from "./Loading";
-import { Transfer } from "./Transfer";
+// import { Transfer } from "./Transfer";
 import { TransactionErrorMessage } from "./TransactionErrorMessage";
 import { WaitingForTransactionMessage } from "./WaitingForTransactionMessage";
-import { NoTokensMessage } from "./NoTokensMessage";
+// import { NoTokensMessage } from "./NoTokensMessage";
 
 // This is the Hardhat Network id that we set in our hardhat.config.js.
 // Here's a list of network ids https://docs.metamask.io/guide/ethereum-provider.html#properties
@@ -134,27 +134,7 @@ export class Dapp extends React.Component {
 
         <div className="row">
           <div className="col-12">
-            {/*
-              If the user has no tokens, we don't show the Transfer form
-            */}
-            {this.state.balance.eq(0) && (
-              <NoTokensMessage selectedAddress={this.state.selectedAddress} />
-            )}
 
-            {/*
-              This component displays a form that the user can use to send a 
-              transaction and transfer some tokens.
-              The component doesn't have logic, it just calls the transferTokens
-              callback.
-            */}
-            {this.state.balance.gt(0) && (
-              <Transfer
-                transferTokens={(to, amount) =>
-                  this._transferTokens(to, amount)
-                }
-                tokenSymbol={this.state.tokenData.symbol}
-              />
-            )}
           </div>
         </div>
       </div>
@@ -230,8 +210,8 @@ export class Dapp extends React.Component {
     // Then, we initialize the contract using that provider and the token's
     // artifact. You can do this same thing with your contracts.
     this._token = new ethers.Contract(
-      contractAddress.Token,
-      TokenArtifact.abi,
+      contractAddress.Stolen,
+      StolenArtifact.abi,
       this._provider.getSigner(0)
     );
   }

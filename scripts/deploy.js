@@ -24,19 +24,21 @@ async function main() {
 
   console.log("Stolen implementation contract address:", instance.address);
 
-  // set the default royalty to 1%
-  await instance.setDefaultRoyalty(owner.address, 100);
+  // set the owner collection limit to 3
+  await instance.setMaxOwnerCollectionSize(3);
+  // set the default royalty to 10%
+  await instance.setDefaultRoyalty(deployer.address, 1000);
   // set the price change to 100%
   await instance.setPriceChangeRate(10000);
   // set the minimum purchase threshold to 0.01 ETH
-  await instance.setPriceChangeRate(ethers.utils.parseEther('0.01'));
+  await instance.setPurchaseThreshold(ethers.utils.parseEther('0.01'));
 
   saveFrontendFiles(instance);
 }
 
-function saveFrontendFiles(token) {
+function saveFrontendFiles(instance) {
   const fs = require("fs");
-  const contractsDir = path.join(__dirname, "..", "frontend", "src", "contracts");
+  const contractsDir = path.join(__dirname, "..", "dapp", "client", "src", "contracts");
 
   if (!fs.existsSync(contractsDir)) {
     fs.mkdirSync(contractsDir);
@@ -44,7 +46,7 @@ function saveFrontendFiles(token) {
 
   fs.writeFileSync(
     path.join(contractsDir, "contract-address.json"),
-    JSON.stringify({ Stolen: contract.address }, undefined, 2)
+    JSON.stringify({ Stolen: instance.address }, undefined, 2)
   );
 
   const StolenArtifact = artifacts.readArtifactSync("Stolen");
