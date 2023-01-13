@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ethers } from "ethers";
+import { ethers, ContractFactory } from "ethers";
 
 import { GiftIcon, MarkGithubIcon, SmileyIcon, SquirrelIcon } from '@primer/octicons-react';
 
@@ -17,7 +17,18 @@ import { MintForm } from "./MintForm";
 import { TransactionErrorMessage } from "./TransactionErrorMessage";
 import { WaitingForTransactionMessage } from "./WaitingForTransactionMessage";
 
-const HARDHAT_NETWORK_ID = '1337';
+const config = {
+  hardhat: {
+    networkId: '1337',
+  },
+  goerli: {
+    networkId: '5',
+  },
+  mainnet: {
+    networkId: '1',
+  },
+};
+
 const ERROR_CODE_TX_REJECTED_BY_USER = 4001;
 
 export class Home extends React.Component {
@@ -53,7 +64,7 @@ export class Home extends React.Component {
   }
 
   _initialize(userAddress) {
-    this._initializeEthers();
+    this._initializeEthers(userAddress);
     this._getTokenData();
     this._startPollingData();
     this._updateCollection();
@@ -65,14 +76,24 @@ export class Home extends React.Component {
     }
   }
 
-  async _initializeEthers() {
+  async _initializeEthers(userAddress) {
     this._provider = new ethers.providers.Web3Provider(window.ethereum);
+    // this._provider = new ethers.providers.AlchemyProvider(network, 'demo');
 
-    this._contract = new ethers.Contract(
-      contractAddress.Stolen,
-      StolenArtifact.abi,
-      this._provider.getSigner(0)
-    );
+    if (userAddress) {
+      this._provider.send('eth_requestAccounts', []);
+      this._contract = new ethers.Contract(
+        contractAddress.Stolen,
+        StolenArtifact.abi,
+        this._provider.getSigner(0)
+      );
+    } else {
+      this._contract = new ethers.Contract(
+        contractAddress.Stolen,
+        StolenArtifact.abi,
+        this._provider
+      );
+    }
   }
 
   async _getTokenData() {
@@ -132,7 +153,7 @@ export class Home extends React.Component {
   }
 
   _checkNetwork() {
-    if (window.ethereum.networkVersion === HARDHAT_NETWORK_ID) {
+    if (window.ethereum.networkVersion === config.hardhat.networkId) {
       return true;
     }
 
