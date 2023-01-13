@@ -384,7 +384,7 @@ export class Home extends React.Component {
         <footer>
           <p className="context">Created during Innovation Week, 2023 (<a href="https://originprotocol.com" target="_blank" rel="noreferrer">Origin Protocol</a>&apos;s internal hackathon)</p>
           <p>Sorry not sorry <a href="https://github.com/originprotocol/stolen" target="_blank" rel="noreferrer"><MarkGithubIcon size={16} /></a></p>
-          <p>Contract address: {this.state.contractAddress}</p>
+          <p>Contract address: {contractAddress}</p>
         </footer>
       </div>
     ) : <Loading />;
