@@ -333,7 +333,7 @@ export class Home extends React.Component {
           <div className="features">
             <p><GiftIcon /><u>Mint for free</u> Pick any Twitter account, get an NFT representing it. You can only have up to three at a time.</p>
             <p><SquirrelIcon /><u>Hodl on tight</u> Anyone can steal your NFT, but they have to pay for it. You will at least double your money&#42;.</p>
-            <p><SmileyIcon /><u>Everything is for sale</u> You don&apos;t list your NFT. You can&apos;t sell it for a loss. You can&apos;t transfer it. But you can buy it back.</p>
+            <p><SmileyIcon /><u>Everything is for sale</u> You don&apos;t list your NFT. You can&apos;t sell it for a loss. You can&apos;t transfer it. But you can always buy it back.</p>
           </div>
           <p>Think everyone will want @elonmusk? Mint it if you still can. What's the worst that could happen?</p>
           <p className="disclaimer">&#42;Not guaranteed, DYOR</p>
