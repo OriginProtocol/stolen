@@ -20,9 +20,8 @@ import { WaitingForTransactionMessage } from "./WaitingForTransactionMessage";
 
 const ERROR_CODE_TX_REJECTED_BY_USER = 4001;
 
-const NETWORK_ID = process.env.REACT_APP_NETWORK_ID;
-const NETWORK_NAME = process.env.REACT_APP_NETWORK_NAME;
-const ALCHEMY_KEY = process.env.REACT_APP_ALCHEMY_KEY;
+const NETWORK_ID = '1337';
+const NETWORK_NAME = 'localhost:4545';
 
 export class Home extends React.Component {
   constructor(props) {
@@ -70,23 +69,13 @@ export class Home extends React.Component {
   }
 
   async _initializeEthers(userAddress) {
-    this._readProvider = new ethers.providers.AlchemyProvider('goerli', ALCHEMY_KEY);
     this._writeProvider = new ethers.providers.Web3Provider(window.ethereum);
-
-    if (userAddress) {
-      this._writeProvider.send('eth_requestAccounts', []);
-      this._contract = new ethers.Contract(
-        contractAddress.Stolen,
-        StolenArtifact.abi,
-        this._writeProvider.getSigner(0)
-      );
-    } else {
-      this._contract = new ethers.Contract(
-        contractAddress.Stolen,
-        StolenArtifact.abi,
-        this._readProvider
-      );
-    }
+    this._writeProvider.send('eth_requestAccounts', []);
+    this._contract = new ethers.Contract(
+      contractAddress.Stolen,
+      StolenArtifact.abi,
+      this._writeProvider.getSigner(0)
+    );
 
     this.setState({ initialized: true });
   }
@@ -99,7 +88,7 @@ export class Home extends React.Component {
   // }
 
   _startPollingData() {
-    this._pollDataInterval = setInterval(() => this._updateCollection(), 600000);
+    this._pollDataInterval = setInterval(() => this._updateCollection(), 1000);
   }
 
   async _connectWallet() {
@@ -384,7 +373,7 @@ export class Home extends React.Component {
         <footer>
           <p className="context">Created during Innovation Week, 2023 (<a href="https://originprotocol.com" target="_blank" rel="noreferrer">Origin Protocol</a>&apos;s internal hackathon)</p>
           <p>Sorry not sorry <a href="https://github.com/originprotocol/stolen" target="_blank" rel="noreferrer"><MarkGithubIcon size={16} /></a></p>
-          <p>Contract address: {contractAddress}</p>
+          <p>Contract address: {contractAddress.Stolen}</p>
         </footer>
       </div>
     ) : <Loading />;

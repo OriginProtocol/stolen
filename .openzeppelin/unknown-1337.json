@@ -17,20 +17,20 @@
       "kind": "uups"
     },
     {
-      "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-      "txHash": "0x78bdd4e358a823d89fd1303c395c8d1cc0cb4fa80aa5b6754e74e3359f5bbac7",
+      "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+      "txHash": "0xd2dad349e4befca0617f06636380d5f5a7e911413ed9ba9d2eca63c1a313d6e9",
       "kind": "uups"
     },
     {
-      "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-      "txHash": "0xd2dad349e4befca0617f06636380d5f5a7e911413ed9ba9d2eca63c1a313d6e9",
+      "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      "txHash": "0xa0a1e4fb789d798bab82abf5c0d207b7670d56b35210294373ded55859c2b913",
       "kind": "uups"
     }
   ],
   "impls": {
     "9a289532933f723ad267d08ea1dc9718e9366f03c2f30d945bec84097f1b9c9a": {
       "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "txHash": "0x9612eefd86cf46150793f7ca7ca8abb7793a225b86867432eba7944cba89b5c7",
+      "txHash": "0x27a887754c58656210c2eb85fe8c53a44ff6e7d4181d0e09ab39e7fb83794fa8",
       "layout": {
         "solcVersion": "0.8.9",
         "storage": [
@@ -233,7 +233,7 @@
             "slot": "451",
             "type": "t_uint256",
             "contract": "Stolen",
-            "src": "contracts/Stolen.sol:45"
+            "src": "contracts/Stolen.sol:43"
           },
           {
             "label": "priceChangeRate",
@@ -241,7 +241,7 @@
             "slot": "452",
             "type": "t_uint256",
             "contract": "Stolen",
-            "src": "contracts/Stolen.sol:47"
+            "src": "contracts/Stolen.sol:45"
           },
           {
             "label": "purchaseThreshold",
@@ -249,7 +249,7 @@
             "slot": "453",
             "type": "t_uint256",
             "contract": "Stolen",
-            "src": "contracts/Stolen.sol:49"
+            "src": "contracts/Stolen.sol:47"
           },
           {
             "label": "lastPrices",
@@ -257,7 +257,7 @@
             "slot": "454",
             "type": "t_mapping(t_uint256,t_uint256)",
             "contract": "Stolen",
-            "src": "contracts/Stolen.sol:52"
+            "src": "contracts/Stolen.sol:50"
           }
         ],
         "types": {
