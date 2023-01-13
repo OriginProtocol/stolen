@@ -10,6 +10,7 @@ import contractAddress from "../contracts/contract-address.json";
 import { NoWalletDetected } from "./NoWalletDetected";
 import { ConnectWallet } from "./ConnectWallet";
 import { Loading } from "./Loading";
+import { EthereumRequired } from "./EthereumRequired";
 import { Account } from "./Account";
 import { Bag } from "./Bag";
 import { Marketplace } from "./Marketplace";
@@ -17,19 +18,11 @@ import { MintForm } from "./MintForm";
 import { TransactionErrorMessage } from "./TransactionErrorMessage";
 import { WaitingForTransactionMessage } from "./WaitingForTransactionMessage";
 
-const config = {
-  hardhat: {
-    networkId: '1337',
-  },
-  goerli: {
-    networkId: '5',
-  },
-  mainnet: {
-    networkId: '1',
-  },
-};
-
 const ERROR_CODE_TX_REJECTED_BY_USER = 4001;
+
+const NETWORK_ID = process.env.REACT_APP_NETWORK_ID;
+const NETWORK_NAME = process.env.REACT_APP_NETWORK_NAME;
+const ALCHEMY_KEY = process.env.REACT_APP_ALCHEMY_KEY;
 
 export class Home extends React.Component {
   constructor(props) {
@@ -37,13 +30,13 @@ export class Home extends React.Component {
 
     this.initialState = {
       alert: undefined,
-      tokenData: undefined,
+      // tokenData: undefined,
+      initialized: false,
       selectedAddress: undefined,
       collection: [],
       txBeingSent: undefined,
       transactionError: undefined,
       networkError: undefined,
-      contractBalance: undefined,
     };
 
     this._buy = this._buy.bind(this);
@@ -65,7 +58,7 @@ export class Home extends React.Component {
 
   _initialize(userAddress) {
     this._initializeEthers(userAddress);
-    this._getTokenData();
+    // this._getTokenData();
     this._startPollingData();
     this._updateCollection();
 
@@ -77,34 +70,36 @@ export class Home extends React.Component {
   }
 
   async _initializeEthers(userAddress) {
-    this._provider = new ethers.providers.Web3Provider(window.ethereum);
-    // this._provider = new ethers.providers.AlchemyProvider(network, 'demo');
+    this._readProvider = new ethers.providers.AlchemyProvider('goerli', ALCHEMY_KEY);
+    this._writeProvider = new ethers.providers.Web3Provider(window.ethereum);
 
     if (userAddress) {
-      this._provider.send('eth_requestAccounts', []);
+      this._writeProvider.send('eth_requestAccounts', []);
       this._contract = new ethers.Contract(
         contractAddress.Stolen,
         StolenArtifact.abi,
-        this._provider.getSigner(0)
+        this._writeProvider.getSigner(0)
       );
     } else {
       this._contract = new ethers.Contract(
         contractAddress.Stolen,
         StolenArtifact.abi,
-        this._provider
+        this._readProvider
       );
     }
+
+    this.setState({ initialized: true });
   }
 
-  async _getTokenData() {
-    const name = await this._contract.name();
-    const symbol = await this._contract.symbol();
+  // async _getTokenData() {
+  //   const name = await this._contract.name();
+  //   const symbol = await this._contract.symbol();
 
-    this.setState({ tokenData: { name, symbol } });
-  }
+  //   this.setState({ tokenData: { name, symbol } });
+  // }
 
   _startPollingData() {
-    this._pollDataInterval = setInterval(() => this._updateCollection(), 10000);
+    this._pollDataInterval = setInterval(() => this._updateCollection(), 600000);
   }
 
   async _connectWallet() {
@@ -153,12 +148,12 @@ export class Home extends React.Component {
   }
 
   _checkNetwork() {
-    if (window.ethereum.networkVersion === config.hardhat.networkId) {
+    if (window.ethereum.networkVersion === NETWORK_ID) {
       return true;
     }
 
     this.setState({ 
-      networkError: 'Please connect Metamask to Localhost:8545'
+      networkError: `Please change your MetaMask network to ${NETWORK_NAME}`
     });
 
     return false;
@@ -188,14 +183,16 @@ export class Home extends React.Component {
 
       console.error(error);
 
-      const { message = '' } = error.error.data;
+      const { message = '' } = error.error ? error.error.data : error;
 
       if (message.match('Address cannot own more than three tokens at a time')) {
         this.setState({ alert: `You can't have more than three NFTs at a time.` });
       } else if (message.match('ERC721: token already minted')) {
         this.setState({ alert: `This NFT has already been minted. You can buy it though.` });
       } else {
-        this.setState({ alert: `An unknown error has occurred. Please check the console.` });
+        alert('An unknown error has occurred. Try refreshing the page or check the console.');
+
+        // this.setState({ alert: `An unknown error has occurred. Please check the console.` });
       }
 
       this.setState({ transactionError: error });
@@ -205,6 +202,10 @@ export class Home extends React.Component {
   }
 
   async _buy({ id, price }) {
+    if (!this.state.selectedAddress) {
+      return alert('Please connect a wallet (blue section).');
+    }
+
     try {
       this._dismissTransactionError();
 
@@ -222,24 +223,34 @@ export class Home extends React.Component {
 
       await this._updateCollection();
     } catch (error) {
-      console.error(error)
+      if (error.match('cannot own more than three')) {
+        alert(`You can't own more than three NFTs at a time. Wait for someone to steal yours.`);
+      } else {
+        alert('An unknown error has occurred. Try refreshing the page or check the console.');
+
+        console.error(error)
+      }
     } finally {
       this.setState({ txBeingSent: undefined });
     }
   }
 
   async _updateCollection() {
+    console.log('_updateCollection');
     const filter = this._contract.filters.Transfer(ethers.constants.AddressZero);
     const events = await this._contract.queryFilter(filter);
+    console.log('queryFilter');
     let collection = [];
 
     await Promise.all(events.map(async e => {
       const id = e.args.tokenId.toString();
       const owner = await this._contract.ownerOf(id);
+      console.log('ownerOf', id);
       const queryString = `?id=${id}`;
       const response = await fetch(`/api/twitter${queryString}`);
       const parsed = await response.json();
       const minPrice = await this._contract.minPrice(id);
+      console.log('minPrice', id);
       const price = ethers.utils.formatEther(minPrice);
 
       collection.push(Object.assign({}, parsed.data, { mintBlock: e.blockNumber, owner, price }));
@@ -249,10 +260,7 @@ export class Home extends React.Component {
       return b.mintBlock - a.mintBlock;
     });
 
-    const balance = await this._provider.getBalance(this._contract.address);
-    const contractBalance = ethers.utils.formatEther(balance);
-
-    this.setState({ collection, contractBalance });
+    this.setState({ collection });
   }
 
   // async _updateBag(userAddress) {
@@ -298,7 +306,18 @@ export class Home extends React.Component {
   }
 
   render() {
-    return this.state.tokenData ? (
+    const bag = this.state.collection.filter(nft => {
+      const ownerAddress = nft.owner.toLowerCase();
+      const userAddress = (this.state.selectedAddress || '').toLowerCase();
+
+      return ownerAddress === userAddress;
+    });
+
+    if (!window.ethereum) {
+      return <EthereumRequired />;
+    }
+
+    return this.state.initialized ? (
       <div className="app">
         <nav>
           <h1>
@@ -343,13 +362,8 @@ export class Home extends React.Component {
               dismiss={() => this._dismissTransactionError()}
             />
           )}
-          {this.state.collection.length > 0 && (
-            <Bag nfts={this.state.collection.filter(nft => {
-              const ownerAddress = nft.owner.toLowerCase();
-              const userAddress = (this.state.selectedAddress || '').toLowerCase();
-
-              return ownerAddress === userAddress;
-            })} />
+          {bag.length > 0 && (
+            <Bag nfts={bag} />
           )}
         </section>
         <section className="marketplace">
@@ -370,7 +384,7 @@ export class Home extends React.Component {
         <footer>
           <p className="context">Created during Innovation Week, 2023 (<a href="https://originprotocol.com" target="_blank" rel="noreferrer">Origin Protocol</a>&apos;s internal hackathon)</p>
           <p>Sorry not sorry <a href="https://github.com/originprotocol/stolen" target="_blank" rel="noreferrer"><MarkGithubIcon size={16} /></a></p>
-          <p>Contract address: {this._contract.address}</p>
+          <p>Contract address: {this.state.contractAddress}</p>
         </footer>
       </div>
     ) : <Loading />;

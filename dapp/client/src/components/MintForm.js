@@ -11,7 +11,7 @@ export function MintForm({ mint, disabled }) {
 
         if (username) {
           if (!/^[a-zA-Z0-9_]{1,15}$/.test(username)) {
-            alert('Invalid username 🫤');
+            return alert('Invalid username 🫤');
           }
 
           const queryString = `?username=${username}`;
