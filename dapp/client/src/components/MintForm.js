@@ -7,9 +7,13 @@ export function MintForm({ mint, disabled }) {
         event.preventDefault();
 
         const formData = new FormData(event.target);
-        const username = formData.get("username");
+        const username = formData.get("username").replace('@', '');
 
         if (username) {
+          if (!/^[a-zA-Z0-9_]{1,15}$/.test(username)) {
+            alert('Invalid username 🫤');
+          }
+
           const queryString = `?username=${username}`;
           const response = await fetch(`/api/twitter${queryString}`);
           const parsed = await response.json();
