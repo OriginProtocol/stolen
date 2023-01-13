@@ -20,12 +20,17 @@
       "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
       "txHash": "0x78bdd4e358a823d89fd1303c395c8d1cc0cb4fa80aa5b6754e74e3359f5bbac7",
       "kind": "uups"
+    },
+    {
+      "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+      "txHash": "0xd2dad349e4befca0617f06636380d5f5a7e911413ed9ba9d2eca63c1a313d6e9",
+      "kind": "uups"
     }
   ],
   "impls": {
     "9a289532933f723ad267d08ea1dc9718e9366f03c2f30d945bec84097f1b9c9a": {
       "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "txHash": "0x9be9de5c0fd20604c70e8d2d590c504da110cda91d45859f88fea760263c5bb6",
+      "txHash": "0x9612eefd86cf46150793f7ca7ca8abb7793a225b86867432eba7944cba89b5c7",
       "layout": {
         "solcVersion": "0.8.9",
         "storage": [
