@@ -1,0 +1,1 @@
+web: sh -c 'cd dapp/ && npm install && npm run start'
