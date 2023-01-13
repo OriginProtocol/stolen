@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ethers, ContractFactory } from "ethers";
+import { ethers } from "ethers";
 
 import { GiftIcon, MarkGithubIcon, SmileyIcon, SquirrelIcon } from '@primer/octicons-react';
 
