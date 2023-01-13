@@ -21,14 +21,14 @@ import { WaitingForTransactionMessage } from "./WaitingForTransactionMessage";
 const ERROR_CODE_TX_REJECTED_BY_USER = 4001;
 
 const NETWORK_ID = '1337';
-const NETWORK_NAME = 'localhost:4545';
+const NETWORK_NAME = 'localhost:8545';
 
 export class Home extends React.Component {
   constructor(props) {
     super(props);
 
     this.initialState = {
-      alert: undefined,
+      // alert: undefined,
       // tokenData: undefined,
       initialized: false,
       selectedAddress: undefined,
@@ -121,7 +121,7 @@ export class Home extends React.Component {
   }
 
   _dismissTransactionError() {
-    this.setState({ alert: undefined, transactionError: undefined });
+    this.setState({ transactionError: undefined });
   }
 
   _getRpcErrorMessage(error) {
@@ -172,16 +172,14 @@ export class Home extends React.Component {
 
       console.error(error);
 
-      const { message = '' } = error.error ? error.error.data : error;
+      const message = error.data ? error.data.message : error.message;
 
       if (message.match('Address cannot own more than three tokens at a time')) {
-        this.setState({ alert: `You can't have more than three NFTs at a time.` });
+        alert(`You can't have more than three NFTs at a time.`);
       } else if (message.match('ERC721: token already minted')) {
-        this.setState({ alert: `This NFT has already been minted. You can buy it though.` });
+        alert(`This NFT has already been minted. You can buy it though.`);
       } else {
         alert('An unknown error has occurred. Try refreshing the page or check the console.');
-
-        // this.setState({ alert: `An unknown error has occurred. Please check the console.` });
       }
 
       this.setState({ transactionError: error });
@@ -212,7 +210,8 @@ export class Home extends React.Component {
 
       await this._updateCollection();
     } catch (error) {
-      if (error.match('cannot own more than three')) {
+      const message = error.data ? error.data.message : error.message;
+      if (message.match('cannot own more than three')) {
         alert(`You can't own more than three NFTs at a time. Wait for someone to steal yours.`);
       } else {
         alert('An unknown error has occurred. Try refreshing the page or check the console.');
@@ -345,12 +344,12 @@ export class Home extends React.Component {
             <WaitingForTransactionMessage txHash={this.state.txBeingSent} />
           )}
           <MintForm mint={this._mint} disabled={!this.state.selectedAddress} />
-          {this.state.transactionError && (
+          {/*this.state.transactionError && (
             <TransactionErrorMessage
               message={this.state.alert}
               dismiss={() => this._dismissTransactionError()}
             />
-          )}
+          )*/}
           {bag.length > 0 && (
             <Bag nfts={bag} />
           )}
